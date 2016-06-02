@@ -163,14 +163,12 @@ function drawToolbar() {
     let row = 0;
     for (let t in tools) {
         t = tools[t];
-        let toolX = toolbarX + col;
-        let toolY = toolbarY + row;
-        t.x = toolX;
-        t.y = toolY;
-        ctx.drawImage(images[t.image], toolX, toolY);
+        t.x = toolbarX + col;
+        t.y = toolbarY + row;
+        ctx.drawImage(images[t.image], t.x, t.y);
         if (selectedTool === t.id) {
             ctx.strokeStyle = "rgba(250, 250, 80, 1.0)";
-            ctx.strokeRect(toolX, toolY, structureWidth, structureHeight);
+            ctx.strokeRect(t.x, t.y, structureWidth, structureHeight);
         }
         if (col === structureWidth) {
             col = 0;
@@ -188,15 +186,6 @@ function placeStructure(sid, x, y) {
 
 function removeStructure(placedStructure) {
     placedStructure.structure = structures.rubble;
-    /*let index = gs.placedStructures.findIndex((ps) => {
-        if (ps === placedStructure) {
-            return true;
-        }
-        return false;
-    });
-    if (index !== undefined) {
-        gs.placedStructures.splice(index, 1);
-    }*/
 }
 
 function clearRubble(x, y) {
@@ -253,12 +242,6 @@ function mouseMove(e) {
     let y = e.offsetY;
     mouseX = x;
     mouseY = y;
-    if (isInside(x, y, terrainX, terrainY, terrainWidth, terrainHeight) &&
-        structures.hasOwnProperty(selectedTool)) {
-        
-        
-        
-    }
 }
 
 function isInside(x, y, tx, ty, twidth, theight) {
