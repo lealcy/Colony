@@ -24,6 +24,9 @@ let toolbarWidth = canvas.width - terrainWidth;
 let toolbarHeight = canvas.height;
 let structureWidth = 64;
 let structureHeight = 64;
+let dnAlpha = 0.0;
+let dnMinAlpha = 0.0;
+let dnMaxAlpha = 0.7;
 let dnTick = 0;
 let dnIndex = 0;
 let dnMaxIndex = 3;
@@ -68,10 +71,10 @@ let tools = {
     }
 };
 let dnCycle = [
-    { ticks: 3600, minAlpha: 0.0, maxAlpha: 0.0 }, // Day
-    { ticks: 600, minAlpha: 0.01, maxAlpha: 0.69 }, // Sundown
-    { ticks: 2400, minAlpha: 0.7, maxAlpha: 0.7 }, // Night
-    { ticks: 600, minAlpha: 0.69, maxAlpha: 0.01 } // Sunrise
+    { ticks: 3600, minAlpha: dnMinAlpha, maxAlpha: dnMinAlpha }, // Day
+    { ticks: 600, minAlpha: dnMinAlpha, maxAlpha: dnMaxAlpha }, // Sundown
+    { ticks: 2400, minAlpha: dnMaxAlpha, maxAlpha: dnMaxAlpha }, // Night
+    { ticks: 600, minAlpha: dnMaxAlpha, maxAlpha: dnMinAlpha } // Sunrise
 ];
 
 // Game State
@@ -134,14 +137,13 @@ function drawMouseTool() {
 
 function drawDayNightCycle() {
     let cycle = dnCycle[dnIndex];
-    let alpha = 0.0;
     if (cycle.minAlpha === cycle.maxAlpha) {
-        alpha = cycle.minAlpha;
+        dnAlpha = cycle.minAlpha;
     } else if (cycle.minAlpha < cycle.maxAlpha) {
-        alpha = (((cycle.maxAlpha - cycle.minAlpha) / cycle.ticks) * dnTick) + 
+        dnAlpha = (((cycle.maxAlpha - cycle.minAlpha) / cycle.ticks) * dnTick) + 
             cycle.minAlpha;
     } else {
-        alpha = (((cycle.minAlpha - cycle.maxAlpha) / cycle.ticks) * 
+        dnAlpha = (((cycle.minAlpha - cycle.maxAlpha) / cycle.ticks) * 
             (cycle.ticks - dnTick)) + cycle.maxAlpha;
     } 
     dnTick++;
@@ -152,7 +154,7 @@ function drawDayNightCycle() {
             dnIndex = 0;
         }
     }    
-    ctx.fillStyle = `rgba(0, 0, 22, ${alpha})`;
+    ctx.fillStyle = `rgba(0, 0, 22, ${dnAlpha})`;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 }
 
@@ -238,10 +240,8 @@ function mouseUp(e) {
 }
 
 function mouseMove(e) {
-    let x = e.offsetX;
-    let y = e.offsetY;
-    mouseX = x;
-    mouseY = y;
+    mouseX = e.offsetX;
+    mouseY = e.offsetY;
 }
 
 function isInside(x, y, tx, ty, twidth, theight) {
